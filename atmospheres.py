@@ -1,3 +1,36 @@
+# =============================================================================
+# File: atmospheres.py
+# Author: Mia Tian
+# Created: 4/2025
+#
+# Description:
+# atmospheres.py - atmospheric model helpers for Orekit-based propagation.
+# Provides wrappers to obtain atmospheric density and neutral-wind information
+# from multiple sources (MSIS via pymsis and local WAM‑IPE netCDF files) and
+# utilities to transform wind vectors into Orekit frames.
+#
+# Main functions:
+#   get_msis_density(earth, date, position, frame)
+#   get_wamipe_density(earth, date, position, frame)
+#   get_wamipe_wind(earth, date, position, frame)
+#   get_file(date, folder, file_header)  -- builds file path (rounded to 10 min)
+#   transform_wind_to_ecef(pos_ecef, wind_uvw)
+#
+# Atmosphere classes (Orekit PythonAtmosphere-compatible):
+#   CustomAtmosphere     - returns density (WAM‑IPE by default) and assumes
+#                          null atmosphere velocity in the central-body frame.
+#   WindyCustomAtmosphere- returns density and neutral-wind velocities from
+#                          WAM‑IPE, transforming UVW grid winds into ECEF and
+#                          then into the inertial frame for use in propagators.
+#
+# Notes:
+#  - Expects WAM‑IPE netCDF files at data_path (rounded timestamps every 10 min).
+#  - Uses orekit_helpers (eci/geodetic conversions), pymsis, netCDF4, numpy.
+#  - Altitudes are converted to km for MSIS/WAM queries; densities and wind
+#    velocities are handled in SI units (density in kg/m^3, wind in m/s).
+#  - Intended to be plugged into Orekit force models (drag, atmospheric effects).
+# =============================================================================
+
 from org.orekit.frames import Frame
 from org.orekit.time import AbsoluteDate
 from org.orekit.utils import PVCoordinates
@@ -15,6 +48,7 @@ from pymsis import msis
 
 from orekit_helpers import absolutedate_to_datetime, eci_to_geodetic, eci2ric
 
+# my hard drive path since the data is fatter than your mom
 data_path = '/Volumes/TOSHIBA EXT/Research/WAMIPE Data/'
 
 def get_msis_density(earth, date: AbsoluteDate, position: Vector3D, frame: Frame):
@@ -74,12 +108,12 @@ def get_wamipe_density(earth, date: AbsoluteDate, position: Vector3D, frame: Fra
     """
     Retrieve the atmospheric density from the WAM-IPE model at a given position and time.
     Parameters:
-    earth (object): The Earth model object.
-    date (AbsoluteDate): The date and time for which the density is to be retrieved.
-    position (Vector3D): The position in ECI coordinates.
-    frame (Frame): The reference frame of the position.
+        earth (object): The Earth model object.
+        date (AbsoluteDate): The date and time for which the density is to be retrieved.
+        position (Vector3D): The position in ECI coordinates.
+        frame (Frame): The reference frame of the position.
     Returns:
-    float: The atmospheric density at the specified position and time.
+        float: The atmospheric density at the specified position and time.
     """
 
     file = get_file(date, data_path + 'density', 'wam_fixed_height')
@@ -106,12 +140,12 @@ def get_wamipe_wind(earth, date: AbsoluteDate, position: Vector3D, frame: Frame)
     """
     Retrieves the neutral wind velocity from the WAM-IPE model at a given position and time.
     Parameters:
-    earth (object): The Earth model object.
-    date (AbsoluteDate): The date and time for which the wind data is required.
-    position (Vector3D): The position in ECI coordinates.
-    frame (Frame): The reference frame of the position.
+        earth (object): The Earth model object.
+        date (AbsoluteDate): The date and time for which the wind data is required.
+        position (Vector3D): The position in ECI coordinates.
+        frame (Frame): The reference frame of the position.
     Returns:
-    Vector3D: The neutral wind velocity vector in the spacecraft body frame at the specified position and time.
+        Vector3D: The neutral wind velocity vector in the spacecraft body frame at the specified position and time.
     """
 
     file = get_file(date, data_path + 'fixed_height_wind', 'fixed_height_wind')
@@ -143,11 +177,11 @@ def transform_wind_to_ecef(pos_ecef: Vector3D, wind_uvw: Vector3D):
     Transforms the wind velocity from the UVW Frame to the ECEF frame.
 
     Parameters:
-    pos_ecef (Vector3D): The position of the spacecraft in the body frame.
-    wind_body (Vector3D): The wind velocity in the spacecraft body frame.
+        pos_ecef (Vector3D): The position of the spacecraft in the body frame.
+        wind_body (Vector3D): The wind velocity in the spacecraft body frame.
 
     Returns:
-    Vector3D: The wind velocity in the ECEF frame.
+        Vector3D: The wind velocity in the ECEF frame.
     """
     # Convert pos_ecef and wind_body to numpy arrays
     pos_body = np.array([pos_ecef.getX(), pos_ecef.getY(), pos_ecef.getZ()])
@@ -197,7 +231,6 @@ class CustomAtmosphere(PythonAtmosphere):
         super().__init__()
         self.earth = earth
     def getDensity(self, date: AbsoluteDate, position: Vector3D, frame: Frame):
-        # TODO for partcipants: get the density from your model given date, position, and frame
         return get_wamipe_density(self.earth, date, position, frame)
         # return self.atm.getDensity(date, position, frame)
         # return get_msis_density(self.earth, date, position, frame)
@@ -273,6 +306,7 @@ class WindyCustomAtmosphere(PythonAtmosphere):
     #     Get the inertial velocity of atmosphere molecules.
     #     By default, atmosphere is supposed to have a null
     #     velocity in ECEF.
+    #     Uses 1km/s velocity opposite to the orbital motion.
     #     '''
     #     # get the transform from ECEF to the inertial frame
     #     ecef_to_eci = self.earth.getBodyFrame().getKinematicTransformTo(frame, date)

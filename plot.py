@@ -1,3 +1,11 @@
+# =============================================================================
+# File: plot.py
+# Author: Mia Tian
+# Created: 4/2025
+#
+# Description: Visualize WAM-IPE and MSIS neutral densities and wind data.
+# =============================================================================
+
 # Initialize orekit and JVM
 import orekit
 from orekit.pyhelpers import setup_orekit_curdir, absolutedate_to_datetime

@@ -1,3 +1,11 @@
+# =============================================================================
+# File: orekit_helpers.py
+# Author: Mia Tian
+# Created: 4/2025
+#
+# Description: Helper functions for working with Orekit in Python.
+# =============================================================================
+
 
 from org.orekit.frames import Frame
 from org.orekit.time import AbsoluteDate, TimeScalesFactory

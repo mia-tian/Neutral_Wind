@@ -1,3 +1,11 @@
+# =============================================================================
+# File: wind_analysis.py
+# Author: Mia Tian
+# Created: 4/2025
+#
+# Description: Analyzes the impact of neutral wind on satellite orbits.
+# =============================================================================
+
 # Initialize orekit and JVM
 import orekit
 from orekit.pyhelpers import setup_orekit_curdir
@@ -16,6 +24,9 @@ import matplotlib.ticker as ticker
 import datetime
 import os
 import traceback
+import pickle
+import tempfile
+import time
 
 from orekit_helpers import absolutedate_to_datetime, eci2ric
 from propagator import prop_orbit
@@ -263,10 +274,11 @@ def analyze_multiple_orbits():
     i_deg_vals = [0.0]               # inclination (deg)
     raan_deg_vals = [0.0]            # RAAN (deg)
     argp_deg_vals = [0.0]                # argument of perigee (deg)
-    M_deg_vals = np.arange(0.0, 360.0, 5.0)  # true anomaly (deg)
+    M_deg_vals = np.arange(40.0, 360.0, 5.0)  # true anomaly (deg)
 
     # propagation settings (tunable)
     duration = 3.99 * 86400.0
+    # duration = .1 * 86400.0
     output_step = 300.0 # seconds
 
     # result file (ensure directory exists)
@@ -274,8 +286,21 @@ def analyze_multiple_orbits():
     os.makedirs(out_dir, exist_ok=True)
     results_path = os.path.join(out_dir, "multiple_orbit_runs.txt")
 
-    # open file for append so partial results are preserved on error; flush+fsync each write
-    with open(results_path, "w", encoding="utf-8") as fout:
+    # pickle path for structured results (written after every run)
+    results_pkl_path = os.path.join(out_dir, "multiple_orbit_runs.pkl")
+
+    # try to resume existing results if present
+    if os.path.exists(results_pkl_path):
+        try:
+            with open(results_pkl_path, 'rb') as fh:
+                results_list = pickle.load(fh)
+        except Exception:
+            results_list = []
+    else:
+        results_list = []
+
+    # open text log for append so partial results are preserved on error; flush+fsync each write
+    with open(results_path, "a", encoding="utf-8") as fout:
         def flush_to_disk():
             try:
                 fout.flush()
@@ -339,7 +364,7 @@ def analyze_multiple_orbits():
 
                                     # propagate in windy atmosphere
                                     try:
-                                        states_windy = prop_orbit(initial_orbit, duration, WindyCustomAtmosphere, degree=2, torder=2,srp= False,solid_tides=False, third_body_attraction=False, plot=False, output_step=300.0)
+                                        states_windy = prop_orbit(initial_orbit, duration, WindyCustomAtmosphere, degree=2, torder=2,srp= False,solid_tides=False, third_body_attraction=False, plot=True, output_step=300.0, plot_path=f"figures/0i/wind_effect_ric_run_{inc_deg}i.png", show_plot=False)
                                         if not states_windy:
                                             raise RuntimeError("prop_orbit returned empty result for windy atmosphere")
                                     except Exception as e_w:
@@ -387,6 +412,38 @@ def analyze_multiple_orbits():
                                     fout.write(line)
                                     flush_to_disk()
 
+                                    # persist structured result to pickle (atomic write)
+                                    try:
+                                        result_entry = {
+                                            'run_index': run_index,
+                                            'alt_km': alt_km,
+                                            'ecc': ecc,
+                                            'inc_deg': inc_deg,
+                                            'raan_deg': raan_deg,
+                                            'argp_deg': argp_deg,
+                                            'M_deg': M_deg,
+                                            'ric_pos_km': ric_pos_km.tolist() if hasattr(ric_pos_km, 'tolist') else list(ric_pos_km),
+                                            'ric_vel_kmps': ric_vel_kmps.tolist() if hasattr(ric_vel_kmps, 'tolist') else list(ric_vel_kmps),
+                                            'status': 'OK',
+                                            'timestamp': time.time(),
+                                        }
+                                        results_list.append(result_entry)
+                                        fd, tmp_path = tempfile.mkstemp(dir=out_dir)
+                                        try:
+                                            with os.fdopen(fd, 'wb') as tmpf:
+                                                pickle.dump(results_list, tmpf, protocol=pickle.HIGHEST_PROTOCOL)
+                                            os.replace(tmp_path, results_pkl_path)
+                                        except Exception:
+                                            # fallback write
+                                            try:
+                                                with open(results_pkl_path, 'wb') as pf:
+                                                    pickle.dump(results_list, pf, protocol=pickle.HIGHEST_PROTOCOL)
+                                            except Exception:
+                                                pass
+                                    except Exception:
+                                        # do not let saving interfere with the main loop
+                                        pass
+
                                 except Exception as e_general:
                                     # unexpected error for this combination: log and continue
                                     msg = (
@@ -397,6 +454,35 @@ def analyze_multiple_orbits():
                                     )
                                     fout.write(msg)
                                     flush_to_disk()
+                                    # record error in pickle as well
+                                    try:
+                                        error_entry = {
+                                            'run_index': run_index,
+                                            'alt_km': alt_km,
+                                            'ecc': ecc,
+                                            'inc_deg': inc_deg,
+                                            'raan_deg': raan_deg,
+                                            'argp_deg': argp_deg,
+                                            'M_deg': M_deg,
+                                            'status': 'ERROR',
+                                            'error': repr(e_general),
+                                            'traceback': traceback.format_exc(),
+                                            'timestamp': time.time(),
+                                        }
+                                        results_list.append(error_entry)
+                                        fd, tmp_path = tempfile.mkstemp(dir=out_dir)
+                                        try:
+                                            with os.fdopen(fd, 'wb') as tmpf:
+                                                pickle.dump(results_list, tmpf, protocol=pickle.HIGHEST_PROTOCOL)
+                                            os.replace(tmp_path, results_pkl_path)
+                                        except Exception:
+                                            try:
+                                                with open(results_pkl_path, 'wb') as pf:
+                                                    pickle.dump(results_list, pf, protocol=pickle.HIGHEST_PROTOCOL)
+                                            except Exception:
+                                                pass
+                                    except Exception:
+                                        pass
                                     continue
 
         # final note

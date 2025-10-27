@@ -1,3 +1,11 @@
+# =============================================================================
+# File: propagator.py
+# Author: Mia Tian
+# Created: 4/2025
+#
+# Description: Propagates satellite orbits using python wrapper of Orekit.
+# =============================================================================
+
 # Initialize orekit and JVM
 import orekit
 from orekit.pyhelpers import setup_orekit_curdir
@@ -249,8 +257,10 @@ def prop_orbit(initial_orbit, duration, CustomAtmosphereClass, plot=True, **kwar
 
         fig.suptitle('Wind Velocity in RIC Coordinates', fontsize=18)
         plt.tight_layout()
-        plt.savefig('figures/wind_vectors.png', dpi=300)
-        plt.show()
+        plot_path = kwargs.get('plot_path', 'figures/wind_vectors.png')
+        plt.savefig(plot_path, dpi=300)
+        if kwargs.get('show_plot', True):
+            plt.show()
         plt.close()
 
     
