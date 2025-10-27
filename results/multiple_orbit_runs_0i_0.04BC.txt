@@ -1,0 +1,22 @@
+Run timestamp: 2025-10-24T17:41:09.441045
+Columns: altitude_km, ecc, inc_deg, raan_deg, argp_deg, trueanom_deg | RIC_pos_km( R,I,C ), RIC_vel_kmps( R,I,C ) | status
+RUN 1: alt_km=400.0, ecc=0.0, inc_deg=0.0, raan_deg=0.0, argp_deg=0.0, M_deg=0.0 | RIC_pos_km=(0.028427,-7.891631,0.000058) | RIC_vel_kmps=(8.916198e-03,-2.807589e-05,6.770986e-07) | STATUS=OK
+RUN 2: alt_km=400.0, ecc=0.0, inc_deg=0.0, raan_deg=0.0, argp_deg=0.0, M_deg=5.0 | RIC_pos_km=(0.025017,-7.906634,0.000173) | RIC_vel_kmps=(8.933983e-03,-2.420331e-05,7.275797e-07) | STATUS=OK
+RUN 3: alt_km=400.0, ecc=0.0, inc_deg=0.0, raan_deg=0.0, argp_deg=0.0, M_deg=10.0 | RIC_pos_km=(0.021498,-7.890292,0.000251) | RIC_vel_kmps=(8.916581e-03,-2.023306e-05,7.626352e-07) | STATUS=OK
+RUN 4: alt_km=400.0, ecc=0.0, inc_deg=0.0, raan_deg=0.0, argp_deg=0.0, M_deg=15.0 | RIC_pos_km=(0.018000,-7.875261,0.000361) | RIC_vel_kmps=(8.900916e-03,-1.617366e-05,7.842761e-07) | STATUS=OK
+RUN 5: alt_km=400.0, ecc=0.0, inc_deg=0.0, raan_deg=0.0, argp_deg=0.0, M_deg=20.0 | RIC_pos_km=(0.014631,-7.821168,0.000470) | RIC_vel_kmps=(8.841095e-03,-1.238088e-05,8.046660e-07) | STATUS=OK
+RUN 6: alt_km=400.0, ecc=0.0, inc_deg=0.0, raan_deg=0.0, argp_deg=0.0, M_deg=25.0 | RIC_pos_km=(0.011100,-7.736580,0.000548) | RIC_vel_kmps=(8.746907e-03,-8.348164e-06,8.525016e-07) | STATUS=OK
+RUN 7: alt_km=400.0, ecc=0.0, inc_deg=0.0, raan_deg=0.0, argp_deg=0.0, M_deg=30.0 | RIC_pos_km=(0.007903,-7.616534,0.000659) | RIC_vel_kmps=(8.612917e-03,-4.582649e-06,8.342572e-07) | STATUS=OK
+RUN 8: alt_km=400.0, ecc=0.0, inc_deg=0.0, raan_deg=0.0, argp_deg=0.0, M_deg=35.0 | RIC_pos_km=(0.004675,-7.479433,0.000758) | RIC_vel_kmps=(8.459682e-03,-7.572944e-07,8.136101e-07) | STATUS=OK
+RUN 9: alt_km=400.0, ecc=0.0, inc_deg=0.0, raan_deg=0.0, argp_deg=0.0, M_deg=40.0 | RIC_pos_km=(0.001086,-7.305499,0.000828) | RIC_vel_kmps=(8.264457e-03,3.390517e-06,8.549250e-07) | STATUS=OK
+RUN 10: alt_km=400.0, ecc=0.0, inc_deg=0.0, raan_deg=0.0, argp_deg=0.0, M_deg=45.0 | RIC_pos_km=(-0.001459,-7.162925,0.000913) | RIC_vel_kmps=(8.105501e-03,6.462135e-06,8.728707e-07) | STATUS=OK
+RUN 11: alt_km=400.0, ecc=0.0, inc_deg=0.0, raan_deg=0.0, argp_deg=0.0, M_deg=50.0 | RIC_pos_km=(-0.003470,-7.221929,0.000983) | RIC_vel_kmps=(8.176132e-03,8.543264e-06,8.861846e-07) | STATUS=OK
+RUN 12: alt_km=400.0, ecc=0.0, inc_deg=0.0, raan_deg=0.0, argp_deg=0.0, M_deg=55.0 | RIC_pos_km=(-0.005093,-7.063545,0.001076) | RIC_vel_kmps=(7.999675e-03,1.079671e-05,9.127708e-07) | STATUS=OK
+RUN 13: alt_km=400.0, ecc=0.0, inc_deg=0.0, raan_deg=0.0, argp_deg=0.0, M_deg=60.0 | RIC_pos_km=(-0.008522,-6.791385,0.001174) | RIC_vel_kmps=(7.694044e-03,1.471611e-05,8.934353e-07) | STATUS=OK
+RUN 14: alt_km=400.0, ecc=0.0, inc_deg=0.0, raan_deg=0.0, argp_deg=0.0, M_deg=65.0 | RIC_pos_km=(-0.010386,-6.620086,0.001243) | RIC_vel_kmps=(7.502850e-03,1.690271e-05,8.932461e-07) | STATUS=OK
+RUN 15: alt_km=400.0, ecc=0.0, inc_deg=0.0, raan_deg=0.0, argp_deg=0.0, M_deg=70.0 | RIC_pos_km=(-0.011681,-6.407842,0.001353) | RIC_vel_kmps=(7.265717e-03,1.856110e-05,8.577710e-07) | STATUS=OK
+RUN 16: alt_km=400.0, ecc=0.0, inc_deg=0.0, raan_deg=0.0, argp_deg=0.0, M_deg=75.0 | RIC_pos_km=(-0.012939,-6.202003,0.001433) | RIC_vel_kmps=(7.035402e-03,2.016235e-05,7.974200e-07) | STATUS=OK
+RUN 17: alt_km=400.0, ecc=0.0, inc_deg=0.0, raan_deg=0.0, argp_deg=0.0, M_deg=80.0 | RIC_pos_km=(-0.013670,-6.075577,0.001513) | RIC_vel_kmps=(6.895727e-03,2.120226e-05,7.799089e-07) | STATUS=OK
+RUN 18: alt_km=400.0, ecc=0.0, inc_deg=0.0, raan_deg=0.0, argp_deg=0.0, M_deg=85.0 | RIC_pos_km=(-0.014774,-5.765442,0.001612) | RIC_vel_kmps=(6.547345e-03,2.258724e-05,7.072318e-07) | STATUS=OK
+RUN 19: alt_km=400.0, ecc=0.0, inc_deg=0.0, raan_deg=0.0, argp_deg=0.0, M_deg=90.0 | RIC_pos_km=(-0.015321,-5.479890,0.001688) | RIC_vel_kmps=(6.226077e-03,2.326449e-05,6.370995e-07) | STATUS=OK
+RUN 20: alt_km=400.0, ecc=0.0, inc_deg=0.0, raan_deg=0.0, argp_deg=0.0, M_deg=95.0 | RIC_pos_km=(-0.016022,-5.299958,0.001780) | RIC_vel_kmps=(6.026286e-03,2.418179e-05,5.898606e-07) | STATUS=OK
